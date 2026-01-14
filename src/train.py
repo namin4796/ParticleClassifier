@@ -11,7 +11,7 @@ import os
 # "Epochs": How many times the model sees the ENTIRE dataset.
 # "Batch Size": How many examples it looks at before updating its brain.
 # "Learning Rate": How big of a change it makes to its brain each time.
-EPOCHS = 50
+EPOCHS = 200
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
 
@@ -24,8 +24,8 @@ print(f"Loading data from {csv_path}...")
 df = pd.read_csv(csv_path)
 
 # separation: X is known, y is required prediction
-X = df[['px', 'py', 'vx', 'vy', 'm_bh']].values # 5 physics parameters
-y = df['label'].values
+X = df[['r','v','m_bh']].values # 5 physics parameters
+y = df['is_unstable'].values
 
 # -- preprocessing --
 # standardizing data
@@ -47,12 +47,12 @@ print(f"Training on {len(X_train)} samples, Testing on {len(X_test)} samples.")
 class OrbitClassifier(nn.Module):
     def __init__(self):
         super(OrbitClassifier, self).__init__()
-        # layer 1: input (5 features) -> hidden layers (16 neurons)
-        self.layer1 = nn.Linear(5, 16)
-        # layer 2: Hidden (16 features) -> hidden layers (8 neurons)
-        self.layer2 = nn.Linear(16, 8)
-        # layer 3: hidden (8) -> output (1 probability)
-        self.layer3 = nn.Linear(8, 1)
+        # layer 1: input (3 inputs: r, v, m_bh) -> hidden layers (64 neurons)
+        self.layer1 = nn.Linear(3, 64)
+        # layer 2: Hidden (64 features) -> hidden layers (32 neurons)
+        self.layer2 = nn.Linear(64, 32)
+        # layer 3: hidden (32) -> output (1 probability)
+        self.layer3 = nn.Linear(32, 1)
 
         # activation function: ReLU (Rectified Linear Unit)
         self.relu = nn.ReLU() # turn -ve nos. to 0
